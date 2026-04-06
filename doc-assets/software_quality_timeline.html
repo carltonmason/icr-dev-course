@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Long March Toward Software Quality & Productivity</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f7f6f2;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: #1a1a1a;
+    color: #f7f6f2;
+    padding: 2.5rem 2rem 2rem;
+    border-bottom: 3px solid #c8a951;
+  }
+
+  header h1 {
+    font-family: 'Georgia', serif;
+    font-size: 1.6rem;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  header p {
+    font-size: 0.85rem;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .intro {
+    font-size: 0.875rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .filter-btn {
+    font-size: 0.78rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .filter-btn:hover {
+    border-color: #888;
+    color: #1a1a1a;
+  }
+
+  .filter-btn.on {
+    background: #1a1a1a;
+    color: #f7f6f2;
+    border-color: #1a1a1a;
+  }
+
+  #timeline-root {
+    position: relative;
+  }
+
+  .milestone {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 48px;
+  }
+
+  .dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+    transition: transform 0.18s;
+    border: 2px solid rgba(255,255,255,0.6);
+  }
+
+  .dot.active {
+    transform: scale(1.5);
+  }
+
+  .year-label {
+    font-size: 13px;
+    color: #777;
+    text-align: center;
+    margin-top: 4px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+  }
+
+  .spine-line {
+    flex: 1;
+    width: 1.5px;
+    background: #d5d2c8;
+    margin-top: 5px;
+    min-height: 18px;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #e0ddd5;
+    border-radius: 6px;
+    padding: 13px 16px;
+    flex: 1;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    margin-bottom: 0;
+  }
+
+  .card:hover {
+    border-color: #b5b0a5;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+
+  .card.active {
+    border-color: #888;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .tagline {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #1a1a1a;
+    line-height: 1.45;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-abstraction { background: #e4f4ed; color: #1a6647; }
+  .badge-structure    { background: #e4edf8; color: #1a3d6e; }
+  .badge-process      { background: #eeebf8; color: #4a2d8a; }
+  .badge-tooling      { background: #fdf3de; color: #7a5010; }
+
+  .detail {
+    display: none;
+    margin-top: 12px;
+    border-top: 1px solid #ece9e2;
+    padding-top: 12px;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail.open { display: block; }
+
+  .detail-title {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #1a1a1a;
+    margin-bottom: 3px;
+    font-family: 'Georgia', serif;
+  }
+
+  .who {
+    font-size: 0.78rem;
+    color: #888;
+    margin-bottom: 8px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .body-text {
+    font-size: 0.85rem;
+    color: #444;
+    line-height: 1.65;
+  }
+
+  .verdict {
+    margin-top: 10px;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 3px solid;
+    line-height: 1.55;
+  }
+
+  .verdict-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 3px;
+    font-weight: bold;
+  }
+
+  .verdict-positive {
+    background: #f0faf5;
+    border-color: #0F6E56;
+  }
+  .verdict-positive .verdict-label { color: #0F6E56; }
+  .verdict-positive .body-text { color: #1a5040; }
+
+  .verdict-neutral {
+    background: #f0f4fb;
+    border-color: #185FA5;
+  }
+  .verdict-neutral .verdict-label { color: #185FA5; }
+  .verdict-neutral .body-text { color: #1a3a66; }
+
+  .milestone-quote {
+    margin: 10px 0;
+    padding: 8px 14px;
+    border-left: 3px solid #c8a951;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.65;
+  }
+
+  .refs {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ref-link {
+    font-size: 0.75rem;
+    font-family: 'Courier New', monospace;
+    color: #185FA5;
+    text-decoration: none;
+    border: 1px solid #b5cde8;
+    border-radius: 4px;
+    padding: 3px 9px;
+    background: #f0f4fb;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+
+  .ref-link:hover {
+    background: #dce8f5;
+    border-color: #185FA5;
+  }
+
+  .ref-link::before {
+    content: '↗ ';
+    font-size: 0.7rem;
+  }
+    font-size: 0.72rem;
+    color: #bbb;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #bbb;
+    padding: 2rem;
+    border-top: 1px solid #e0ddd5;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Long March Toward Software Quality &amp; Productivity</h1>
+  <p>Key milestones from von Neumann to AI-assisted development, via cloud and DevOps</p>
+</header>
+
+<div class="container">
+  <p class="intro">Click any milestone to expand details. Filter by theme using the buttons below.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn on" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="abstraction">Abstraction</button>
+    <button class="filter-btn" data-filter="structure">Structure</button>
+    <button class="filter-btn" data-filter="process">Process</button>
+    <button class="filter-btn" data-filter="tooling">Tooling</button>
+  </div>
+
+  <div id="timeline-root"></div>
+</div>
+
+<footer>
+  Prepared for a lecture on software development fundamentals for physics PhD candidates.
+</footer>
+
+<script>
+const milestones = [
+  {
+    year: "1945",
+    tagline: "Code lives in memory — infinite flexibility, infinite rope to hang yourself",
+    title: "Stored-program architecture",
+    who: "John von Neumann",
+    theme: "abstraction",
+    color: "#1D9E75",
+    body: "Von Neumann's architecture stored instructions as data in memory alongside the data they operated on. This made programs modifiable and general-purpose — but it also meant any program could overwrite any other part of memory, including itself. The power that made software possible is the same power that makes software bugs possible.",
+    verdict: "Foundation of everything that follows. The flexibility is the feature and the curse.",
+    vtype: "neutral",
+    refs: [
+      { label: "Von Neumann — Britannica", url: "https://www.britannica.com/biography/John-von-Neumann" },
+      { label: "First Draft of a Report on EDVAC (1945)", url: "https://en.wikipedia.org/wiki/First_Draft_of_a_Report_on_the_EDVAC" }
+    ]
+  },
+  {
+    year: "1952",
+    tagline: "The machine can write its own instructions",
+    title: "A-0 compiler / subroutine linker",
+    who: "Grace Hopper",
+    theme: "abstraction",
+    color: "#1D9E75",
+    body: "Hopper demonstrated that a program could translate symbolic references into machine code, assembling pre-written subroutines into a runnable program. Colleagues were skeptical — 'computers can't write programs.' She proved otherwise. FLOW-MATIC (1955) followed, using English-like syntax that directly inspired COBOL.",
+    verdict: "Proved the concept of language translation. Every compiler since stands on this.",
+    vtype: "positive",
+    refs: [
+      { label: "Grace Hopper — Computer History Museum", url: "https://computerhistory.org/profile/grace-murray-hopper/" },
+      { label: "FLOW-MATIC — Wikipedia", url: "https://en.wikipedia.org/wiki/FLOW-MATIC" }
+    ]
+  },
+  {
+    year: "1957",
+    tagline: "Write what you mean, not how the machine thinks",
+    title: "FORTRAN — first optimizing compiler",
+    who: "John Backus, IBM",
+    theme: "abstraction",
+    color: "#1D9E75",
+    body: "FORTRAN let scientists and engineers write algebraic expressions directly. A formula could look like a formula. The IBM team had to prove the compiled code was as fast as hand-written assembly — performance skepticism was the main barrier to adoption. They succeeded. FORTRAN is still used in scientific computing today.",
+    verdict: "Massive productivity leap. Also unleashed spaghetti code at scale — the next problem.",
+    vtype: "positive",
+    refs: [
+      { label: "FORTRAN — Wikipedia", url: "https://en.wikipedia.org/wiki/Fortran" },
+      { label: "John Backus — ACM Turing Award", url: "https://amturing.acm.org/award_winners/backus_0703524.cfm" }
+    ]
+  },
+  {
+    year: "1968",
+    tagline: "We have a crisis — let's name it 'engineering'",
+    title: "NATO software engineering conference",
+    who: "Peter Naur, Brian Randell, et al.",
+    theme: "process",
+    color: "#7F77DD",
+    body: "Projects were consistently late, over budget, and unreliable. NATO convened a conference that coined the term 'software engineering' — explicitly aspirational. The field was acknowledging it had no discipline equivalent to civil or mechanical engineering. The conference produced no silver bullet but created a community of shared concern.",
+    verdict: "Named the problem. Still being solved. The gap between software and other engineering disciplines persists.",
+    vtype: "neutral",
+    refs: [
+      { label: "1968 NATO Conference Report (original)", url: "http://homepages.cs.ncl.ac.uk/brian.randell/NATO/nato1968.PDF" }
+    ]
+  },
+  {
+    year: "1968",
+    tagline: "GOTO considered harmful — structure your flow or lose your mind",
+    title: "Structured programming",
+    who: "Edsger Dijkstra",
+    theme: "structure",
+    color: "#378ADD",
+    body: "Dijkstra's famous letter argued that GOTO — which let execution jump anywhere — made programs impossible to reason about. Replace it with sequences, conditionals, and loops: structures whose behavior is predictable and bounded. Programs became more readable, testable, and provably correct within sections.",
+    verdict: "Transformed coding practice within a decade. The right idea at the right time.",
+    vtype: "positive",
+    refs: [
+      { label: "Go To Statement Considered Harmful (1968)", url: "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf" },
+      { label: "Dijkstra — ACM Turing Award", url: "https://amturing.acm.org/award_winners/dijkstra_1053701.cfm" }
+    ]
+  },
+  {
+    year: "1972",
+    tagline: "Hide your decisions — every module owns its secrets",
+    title: "Information hiding & modularity",
+    who: "David Parnas",
+    theme: "structure",
+    color: "#378ADD",
+    body: "Parnas argued that modules should be designed around the decisions they hide, not the functions they perform. A module's internals should be invisible to everything else. This is the direct ancestor of encapsulation, APIs, and microservices. It gives you the freedom to change an implementation without breaking everything that uses it.",
+    verdict: "One of the most durable ideas in all of software. Still underused in scientific code.",
+    vtype: "positive",
+    refs: [
+      { label: "Modular programming — Wikipedia", url: "https://en.wikipedia.org/wiki/Modular_programming" },
+      { label: "David Parnas — IEEE Computer Society", url: "https://www.computer.org/profiles/david-parnas" }
+    ]
+  },
+  {
+    year: "1972",
+    tagline: "A time machine for your code",
+    title: "Version control (SCCS → Git)",
+    who: "Marc Rochkind → Linus Torvalds (Git, 2005)",
+    theme: "tooling",
+    color: "#BA7517",
+    body: "SCCS (1972) let developers record and restore past states of files. The lineage runs SCCS → RCS → CVS → Subversion → Git. Git (2005) made branching and merging practical and distributed. For scientists: version control is reproducibility infrastructure. If you can't identify exactly what code produced a result, the result is suspect.",
+    verdict: "Git has become universal. Scientific software adoption is still catching up.",
+    vtype: "positive",
+    refs: [
+      { label: "Git — Official documentation", url: "https://git-scm.com/book/en/v2/Getting-Started-A-Short-History-of-Git" },
+      { label: "Version control — Wikipedia", url: "https://en.wikipedia.org/wiki/Version_control" }
+    ]
+  },
+  {
+    year: "1975",
+    tagline: "Nine women can't make a baby in one month",
+    title: "The Mythical Man-Month",
+    who: "Fred Brooks",
+    theme: "process",
+    color: "#7F77DD",
+    body: "Brooks documented why large software projects fail: communication overhead grows faster than team size, late projects get later when people are added, and conceptual integrity requires a single vision. His 'No Silver Bullet' (1986) distinguished essential complexity (inherent to the problem) from accidental complexity (artifacts of our tools) — and argued no technique eliminates the former.",
+    quote: "There is no single development, in either technology or management technique, which by itself promises even one order-of-magnitude improvement within a decade in productivity, in reliability, in simplicity.",
+    verdict: "Prescient and still accurate 50 years later. Required reading.",
+    vtype: "neutral",
+    refs: [
+      { label: "No Silver Bullet (1986) — full paper", url: "http://worrydream.com/refs/Brooks-NoSilverBullet.pdf" },
+      { label: "Fred Brooks — Wikipedia", url: "https://en.wikipedia.org/wiki/Fred_Brooks" }
+    ]
+  },
+  {
+    year: "1983",
+    tagline: "Bundle data and behavior — the world is made of objects",
+    title: "Object-oriented programming goes mainstream",
+    who: "Bjarne Stroustrup (C++); Alan Kay (Smalltalk)",
+    theme: "structure",
+    color: "#378ADD",
+    body: "OOP organized programs around objects that bundle data and behavior. Encapsulation reduced exposed surface area; inheritance promised reuse. C++ brought OOP to systems programming; Java (1995) made it the default for a generation. Inheritance hierarchies proved harder to manage than advertised, giving rise to the later mantra 'prefer composition over inheritance.'",
+    verdict: "Powerful organizing principle. Inheritance was oversold. Encapsulation was not.",
+    vtype: "neutral",
+    refs: [
+      { label: "Object-oriented programming — Wikipedia", url: "https://en.wikipedia.org/wiki/Object-oriented_programming" }
+    ]
+  },
+  {
+    year: "1996",
+    tagline: "Test first, then write — red, green, refactor",
+    title: "Unit testing & test-driven development",
+    who: "Kent Beck (JUnit, TDD)",
+    theme: "process",
+    color: "#7F77DD",
+    body: "Beck formalized writing the test before the code — forcing clarity about expected behavior before implementation. Automated unit tests gave developers a safety net for refactoring: change code confidently because the tests will catch regressions. Most scientific software has essentially no tests, which is why results are sometimes irreproducible — not fraud, just undetected bugs.",
+    verdict: "Transformative where adopted. Adoption in scientific computing remains low.",
+    vtype: "positive",
+    refs: [
+      { label: "Test-driven development — Wikipedia", url: "https://en.wikipedia.org/wiki/Test-driven_development" }
+    ]
+  },
+  {
+    year: "2001",
+    tagline: "Working software over comprehensive documentation",
+    title: "The Agile Manifesto",
+    who: "17 practitioners, Snowbird, Utah",
+    theme: "process",
+    color: "#7F77DD",
+    body: "Waterfall's fatal flaw was that requirements were never truly known upfront. Agile replaced long specification cycles with short iterations — deliver working software frequently, adapt to change. For scientific software, where the problem domain is genuinely uncertain, this maps naturally. The risk: iteration without design becomes permanent prototype.",
+    verdict: "Right diagnosis of waterfall's failure. 'Agile' has been co-opted and diluted; the core insight holds.",
+    vtype: "neutral",
+    refs: [
+      { label: "Manifesto for Agile Software Development (original)", url: "https://agilemanifesto.org" },
+      { label: "History of the Agile Manifesto — Wikipedia", url: "https://en.wikipedia.org/wiki/Agile_software_development#The_Agile_Manifesto" }
+    ]
+  },
+  {
+    year: "2006",
+    tagline: "Rent a supercomputer by the hour — someone else minds the hardware",
+    title: "Cloud computing",
+    who: "Amazon Web Services (EC2 & S3); later Google Cloud, Microsoft Azure",
+    theme: "tooling",
+    color: "#BA7517",
+    body: "Amazon's launch of EC2 and S3 in 2006 turned computing infrastructure into a utility. Instead of buying and maintaining servers, teams could provision them in minutes and pay only for what they used. For scientific computing, the implications are profound: analyses that once required institutional HPC allocations can now run on-demand, at scale, from a laptop. Reproducibility also improves — environments can be captured and shared as code.",
+    verdict: "Transformed how software is deployed and operated. Shifted the industry from owning infrastructure to renting it. Now the default for most new projects.",
+    vtype: "positive",
+    refs: [
+      { label: "Cloud computing — Wikipedia", url: "https://en.wikipedia.org/wiki/Cloud_computing" },
+      { label: "History of cloud computing — Wikipedia", url: "https://en.wikipedia.org/wiki/History_of_cloud_computing" }
+    ]
+  },
+  {
+    year: "2009",
+    tagline: "Tear down the wall between the people who build it and the people who run it",
+    title: "DevOps",
+    who: "Patrick Debois, John Allspaw, Paul Hammond et al.",
+    theme: "process",
+    color: "#7F77DD",
+    body: "DevOps emerged from frustration with the dysfunction between development teams (who wanted to ship changes fast) and operations teams (who wanted systems to stay stable). The landmark moment was a 2009 Velocity Conference talk by Flickr engineers: '10+ Deploys Per Day: Dev and Ops Cooperation at Flickr.' Patrick Debois coined the term at the first DevOpsDays conference in Ghent that same year. The practice unifies development, testing, and deployment through automation, continuous integration, and shared ownership.",
+    verdict: "Widely adopted in industry. The cultural change — shared ownership of reliability — is harder than the tooling and still eludes many organizations.",
+    vtype: "positive",
+    refs: [
+      { label: "DevOps — Wikipedia", url: "https://en.wikipedia.org/wiki/DevOps" }
+    ]
+  },
+  {
+    year: "2021",
+    tagline: "AI writes the first draft — you're responsible for what ships",
+    title: "AI-assisted development",
+    who: "GitHub Copilot, then Claude, GPT-4, et al.",
+    theme: "tooling",
+    color: "#BA7517",
+    body: "LLM-based coding assistants can generate plausible code rapidly from natural language prompts. Productivity gains are real. So is the risk: generated code that looks correct but isn't tested or understood. Every productivity leap in this timeline created new ways to make bigger messes faster. The fundamentals — naming, modularity, testing, documentation — become more important as generation gets easier.",
+    verdict: "Too new to judge fully. History says: the discipline matters more, not less.",
+    vtype: "neutral",
+    refs: [
+      { label: "GitHub Copilot — Wikipedia", url: "https://en.wikipedia.org/wiki/Microsoft_Copilot" }
+    ]
+  }
+];
+
+const themeClass = {
+  abstraction: 'badge-abstraction',
+  structure:   'badge-structure',
+  process:     'badge-process',
+  tooling:     'badge-tooling'
+};
+
+const themeLabel = {
+  abstraction: 'Abstraction',
+  structure:   'Structure',
+  process:     'Process',
+  tooling:     'Tooling'
+};
+
+const verdictLabel = {
+  positive: 'Held up well',
+  neutral:  'Mixed legacy'
+};
+
+function render(filter) {
+  const root = document.getElementById('timeline-root');
+  const filtered = filter === 'all' ? milestones : milestones.filter(m => m.theme === filter);
+
+  root.innerHTML = filtered.map((m, i) => {
+    const isLast = i === filtered.length - 1;
+    const origIdx = milestones.indexOf(m);
+    const vClass = 'verdict-' + m.vtype;
+    return `
+      <div class="milestone" data-idx="${origIdx}">
+        <div class="spine">
+          <div class="dot" id="dot-${origIdx}" style="background:${m.color};"></div>
+          <div class="year-label">${m.year}</div>
+          ${!isLast ? '<div class="spine-line"></div>' : ''}
+        </div>
+        <div class="card" id="card-${origIdx}">
+          <div class="card-top">
+            <div class="tagline">${m.tagline}</div>
+            <span class="badge ${themeClass[m.theme]}">${themeLabel[m.theme]}</span>
+          </div>
+          <div class="expand-hint">click to expand</div>
+          <div class="detail" id="detail-${origIdx}">
+            <div class="detail-title">${m.title}</div>
+            <div class="who">${m.who}</div>
+            <div class="body-text">${m.body}</div>
+            ${m.quote ? `<div class="milestone-quote">${m.quote}</div>` : ''}
+            <div class="verdict ${vClass}">
+              <div class="verdict-label">${verdictLabel[m.vtype]}</div>
+              <div class="body-text">${m.verdict}</div>
+            </div>
+            ${m.refs && m.refs.length ? `<div class="refs">${m.refs.map(r => `<a class="ref-link" href="${r.url}" target="_blank" rel="noopener noreferrer">${r.label}</a>`).join('')}</div>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  root.querySelectorAll('.milestone').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const idx = el.dataset.idx;
+      const detail = document.getElementById('detail-' + idx);
+      const card   = document.getElementById('card-' + idx);
+      const dot    = document.getElementById('dot-' + idx);
+      const hint   = card.querySelector('.expand-hint');
+      const isOpen = detail.classList.contains('open');
+      detail.classList.toggle('open', !isOpen);
+      card.classList.toggle('active', !isOpen);
+      dot.classList.toggle('active', !isOpen);
+      if (hint) hint.style.display = isOpen ? '' : 'none';
+    });
+  });
+}
+
+render('all');
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    render(btn.dataset.filter);
+  });
+});
+</script>
+</body>
+</html>
