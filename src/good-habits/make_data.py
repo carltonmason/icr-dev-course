@@ -11,6 +11,6 @@ for pid in range(1, 11):
         diameter = max(0, baseline + trend * day / 10 + np.random.normal(0, 1))
         rows.append({'p': pid, 't': day, 'd': round(diameter, 1)})
 
-pd.DataFrame(rows).to_csv('/home/claude/lecture/tumor_data.csv', index=False)
+pd.DataFrame(rows).to_csv('src/good-habits/tumor_data.csv', index=False)
 print("Created tumor_data.csv")
-print(pd.read_csv('/home/claude/lecture/tumor_data.csv').head(8))
+print(pd.read_csv('src/good-habits/tumor_data.csv').head(8))
