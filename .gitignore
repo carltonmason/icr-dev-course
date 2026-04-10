@@ -1,3 +1,4 @@
 *.docx
 .DS_Store
 .venv/
+tumor_data.csv
