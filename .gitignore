@@ -1,4 +1,25 @@
 *.docx
-.DS_Store
 .venv/
 tumor_data.csv
+
+# Generated slide decks — rebuild from markdown source using build_slides.js
+output/
+ 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+ 
+# Node
+node_modules/
+ 
+# macOS
+.DS_Store
+ 
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+ 
