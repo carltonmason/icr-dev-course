@@ -31,6 +31,34 @@ const FONTS = {
 };
 
 // =============================================================================
+// INLINE MARKDOWN PARSER
+// =============================================================================
+function parseInlineMarkdown(text, baseOptions = {}) {
+  const INLINE_PATTERN = /(\*\*(.+?)\*\*|`([^`]+?)`)/g;
+  const runs = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = INLINE_PATTERN.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      runs.push({ text: text.slice(lastIndex, match.index), options: { ...baseOptions } });
+    }
+    if (match[0].startsWith('**')) {
+      runs.push({ text: match[2], options: { ...baseOptions, bold: true } });
+    } else {
+      runs.push({ text: match[3], options: { ...baseOptions, fontFace: 'Courier New', fontSize: (baseOptions.fontSize || 14) - 1 } });
+    }
+    lastIndex = INLINE_PATTERN.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    runs.push({ text: text.slice(lastIndex), options: { ...baseOptions } });
+  }
+
+  return runs.length === 0 ? text : runs;
+}
+
+// =============================================================================
 // MARKDOWN PARSER
 // =============================================================================
 function parseMarkdown(filePath) {
@@ -300,13 +328,8 @@ function addCodeSlide(pres, slide) {
         for (const line of textLines) {
           if (line.startsWith("**") && line.endsWith("**")) {
             // Bold heading
-            const clean = line.replace(/\*\*/g, "");
-            s.addText(clean, {
-              x: 0.6, y: yPos, w: 8.8, h: 0.3,
-              fontSize: 13, fontFace: FONTS.body,
-              color: COLORS.text, bold: true, align: "left",
-              margin: 0
-            });
+            const textOpts = { x: 0.6, y: yPos, w: 8.8, h: 0.3, fontSize: 13, fontFace: FONTS.body, color: COLORS.text, bold: true, align: "left", margin: 0 };
+            s.addText(parseInlineMarkdown(line, textOpts), textOpts);
             yPos += 0.32;
           } else if (line.startsWith("- ") || line.startsWith("* ")) {
             // Bullet
@@ -321,13 +344,8 @@ function addCodeSlide(pres, slide) {
             });
             yPos += 0.27;
           } else if (line) {
-            const clean = line.replace(/\*\*(.+?)\*\*/g, "$1").replace(/`(.+?)`/g, "$1");
-            s.addText(clean, {
-              x: 0.6, y: yPos, w: 8.8, h: 0.25,
-              fontSize: 12, fontFace: FONTS.body,
-              color: COLORS.textLight, align: "left",
-              margin: 0
-            });
+            const textOpts = { x: 0.6, y: yPos, w: 8.8, h: 0.25, fontSize: 12, fontFace: FONTS.body, color: COLORS.textLight, align: "left", margin: 0 };
+            s.addText(parseInlineMarkdown(line, textOpts), textOpts);
             yPos += 0.27;
           }
         }
@@ -364,32 +382,28 @@ function addContentSlide(pres, slide) {
   for (const line of bodyLines) {
     if (line.startsWith("**") || (line.includes(":**") && line.includes("**"))) {
       // Bold label line
-      const clean = line.replace(/\*\*/g, "").replace(/`(.+?)`/g, "$1");
-      s.addText(clean, {
-        x: 0.6, y: yPos, w: 8.8, h: 0.32,
-        fontSize: 14, fontFace: FONTS.body,
-        color: COLORS.text, bold: true, align: "left",
-        margin: 0
-      });
+      const textOpts = { x: 0.6, y: yPos, w: 8.8, h: 0.32, fontSize: 14, fontFace: FONTS.body, color: COLORS.text, bold: true, align: "left", margin: 0 };
+      s.addText(parseInlineMarkdown(line, textOpts), textOpts);
       yPos += 0.36;
     } else {
-      const clean = line.replace(/\*\*(.+?)\*\*/g, "$1").replace(/`(.+?)`/g, "$1");
-      s.addText(clean, {
-        x: 0.6, y: yPos, w: 8.8, h: 0.28,
-        fontSize: 12.5, fontFace: FONTS.body,
-        color: COLORS.textLight, align: "left",
-        margin: 0
-      });
+      const textOpts = { x: 0.6, y: yPos, w: 8.8, h: 0.28, fontSize: 12.5, fontFace: FONTS.body, color: COLORS.textLight, align: "left", margin: 0 };
+      s.addText(parseInlineMarkdown(line, textOpts), textOpts);
       yPos += 0.3;
     }
   }
 
   // Bullets below body
   if (slide.bullets.length > 0) {
-    const bulletItems = slide.bullets.map((b, i) => ({
-      text: b.replace(/\*\*(.+?)\*\*/g, "$1").replace(/`(.+?)`/g, "$1"),
-      options: { bullet: true, breakLine: i < slide.bullets.length - 1 }
-    }));
+    const baseRunOpts = { fontSize: 12.5, fontFace: FONTS.body, color: COLORS.textLight };
+    const bulletItems = slide.bullets.flatMap((b, i) => {
+      const parsed = parseInlineMarkdown(b, baseRunOpts);
+      const runs = typeof parsed === 'string'
+        ? [{ text: parsed, options: { ...baseRunOpts } }]
+        : parsed;
+      runs[0].options.bullet = true;
+      if (i < slide.bullets.length - 1) runs[runs.length - 1].options.breakLine = true;
+      return runs;
+    });
 
     s.addText(bulletItems, {
       x: 0.6, y: yPos, w: 8.8, h: slide.bullets.length * 0.35,
@@ -567,12 +581,8 @@ function addRecapSlide(pres, slide) {
   // Closing line
   const closingLine = slide.body.split("\n").filter(l => l.trim() && !l.match(/^\d+\./)).pop();
   if (closingLine) {
-    s.addText(closingLine.replace(/\*\*/g, ""), {
-      x: 0.6, y: yPos + 0.2, w: 8.8, h: 0.35,
-      fontSize: 13, fontFace: FONTS.heading,
-      color: COLORS.gold, italic: true, align: "left",
-      margin: 0
-    });
+    const textOpts = { x: 0.6, y: yPos + 0.2, w: 8.8, h: 0.35, fontSize: 13, fontFace: FONTS.heading, color: COLORS.gold, italic: true, align: "left", margin: 0 };
+    s.addText(parseInlineMarkdown(closingLine, textOpts), textOpts);
   }
 
   if (slide.notes) s.addNotes(slide.notes);
@@ -599,15 +609,15 @@ function addClosingSlide(pres, slide) {
   const bodyLines = slide.body.split("\n").filter(l => l.trim());
   let yPos = 3.0;
   for (const line of bodyLines) {
-    const clean = line.replace(/`(.+?)`/g, "$1");
-    s.addText(clean, {
+    const textOpts = {
       x: 0.8, y: yPos, w: 8.4, h: 0.35,
       fontSize: 13, fontFace: line.includes("Download") ? FONTS.code : FONTS.heading,
       color: line.includes("Download") ? COLORS.muted : COLORS.gold,
       italic: !line.includes("Download"),
       align: "left",
       margin: 0
-    });
+    };
+    s.addText(parseInlineMarkdown(line, textOpts), textOpts);
     yPos += 0.45;
   }
 

@@ -256,6 +256,18 @@ them as forward pointers only — "you'll see this properly in the Git session."
   colouring (keywords purple, strings green, comments grey, numbers orange).
   For hero slides (e.g. count-the-sins), prefer VS Code screenshots via the
   image embed route for full fidelity.
+- **Inline bold and code formatting not preserved (pending — handle in Claude Code):**
+  `pptxgenjs` requires text with inline formatting to be passed as an array of
+  run objects rather than a plain string. Currently `**bold**` and `` `code` ``
+  markers in bullet text render as literal asterisks/backticks in the output
+  `.pptx`. Fix by integrating the `parseInlineMarkdown()` helper function into
+  `build_slides.js`. Steps: (1) paste the function after the constants block;
+  (2) wrap every `slide.addText(bulletText, options)` call for bullet/body text
+  as `slide.addText(parseInlineMarkdown(bulletText, options), options)`;
+  (3) verify by running the pipeline against `slides/02_five_habits.md` and
+  confirming `**bold**` labels render bold and `` `code` `` spans render in
+  Courier New. The function is a safe drop-in — plain strings are returned
+  unchanged. Full function definition is in `parseInlineMarkdown.js`.
 - **Slide routing migration (pending — handle in Claude Code):**
   `build_slides.js` currently uses hardcoded ID lists (`CODE_SLIDES`,
   `DIAGRAM_SLIDES`, `TABLE_SLIDES`) to route slides to builder functions.
