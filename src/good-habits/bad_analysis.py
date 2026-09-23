@@ -2,12 +2,10 @@
 import pandas as pd
 import numpy as np
 
-# load data
 df = pd.read_csv("tumor_data.csv")
 df2 = df[df['d'] >= 0]
 df2['v2'] = (4/3) * 3.14159 * (df2['d']/2)**3
 
-# calc growth
 results = []
 for pid in df2['p'].unique():
     x = df2[df2['p'] == pid].sort_values('t')

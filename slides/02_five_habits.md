@@ -32,7 +32,7 @@ This isn't about job titles — it's about habits. A physicist who writes code w
 # The Journey
 
 ```diagram
-[Write code that runs] → [Name things clearly] → [Split into functions] → [Add tests] → [Use version control] → [Document it]
+[Write code that runs] → [Name things clearly] → [Modularize] → [Add tests] → [Use version control] → [Document it]
 ```
 
 Subtitle: Each habit builds on the last. Today we cover all five.
@@ -154,24 +154,37 @@ Put both on screen side by side if possible. Ask: "Which one would you rather de
 
 ## habit2_title
 
-# Habit 2: Split the File
-## One function, one job
+# Habit 2: Modularity
+
+## Split into functions - One function, one job that you can reason about in isolation
+
+## Split into files - When appropriate
 
 <!-- NOTES
 Transition line: "Now that we can read the names, notice the code is still one giant block. What if you need the volume calculation in a different analysis? Copy-paste it? That's how bugs breed."
+
+Principle. A function should do one thing. A file should contain related functions. The opposite of modular code is a 2,000-line script where changing anything might break everything. The goal: write functions you can reason about in isolation.
+
+This is Parnas from your timeline — information hiding. Each function owns a decision. You can change how a function works without changing everything that calls it, as long as you don't change what it does.
 -->
 
 ---
 
 ## habit2_why
 
-# Why Split?
+# Why Split Into Functions?
 
-**Reuse:** Need `calculate_sphere_volume()` in another analysis? Import it.
+**Readability:** The main script now reads like a summary - details live in the functions,
+
+**Information Hiding:** Each function owns a decision, action or transformation (e.g. Parnas)
+
+**Change isolation:** Limit blast-radius of changes
 
 **Testing:** You can't test a 50-line script easily. You CAN test a 5-line function.
 
 **Debugging:** Error in growth rate? You know exactly where to look.
+
+**Reuse:** Need `calculate_sphere_volume()` in another analysis? Import it.
 
 **Collaboration:** Two people can work on different functions without conflicts.
 

@@ -13,6 +13,7 @@ same job with naming, modularity, and tests.
 | `make_data.py` | Generates `tumor_data.csv` (10 synthetic patients, 4 timepoints each). Run this first. |
 | `tumor_data.csv` | Synthetic tumor diameter measurements. Pre-generated so you can skip `make_data.py` if you want. |
 | `bad_analysis.py` | The "programmer" version. Runs. Produces correct numbers. Commits every sin. |
+| `better_names_analysis.py` | The incrementally improved "programmer" version with better names for vars and functions. Runs. Produces correct numbers. Commits every sin. |
 | `good_analysis.py` | The "developer" version. Same inputs, same outputs, completely different artifact. |
 | `test_good_analysis.py` | Tests for the developer version. Four tests, all passing. |
 
