@@ -34,7 +34,7 @@ cd src/good-habits
 ../../.venv/bin/python test_good_analysis.py
 ```
 
-Both analysis scripts produce the same output:
+Both analysis scripts print the same values:
 ```
 Responders: 2/10
 Mean growth rate: 56.51 mm^3/day
