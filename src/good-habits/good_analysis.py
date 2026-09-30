@@ -13,13 +13,18 @@ def calculate_sphere_volume(diameter_mm: float) -> float:
     return SPHERE_COEFFICIENT * radius_mm ** 3
 
 
+def filter_valid_measurements(measurements: pd.DataFrame) -> pd.DataFrame:
+    """Return only measurements with a non-negative diameter."""
+    return measurements.loc[measurements['diameter_mm'] >= 0].copy()
+
+
 def load_measurements(csv_path: str) -> pd.DataFrame:
-    """Load measurements and drop invalid rows."""
+    """Load measurements, drop invalid rows, and add tumor volume."""
     measurements = pd.read_csv(csv_path)
     measurements = measurements.rename(
         columns={'p': 'patient_id', 't': 'day', 'd': 'diameter_mm'}
     )
-    valid_measurements = measurements[measurements['diameter_mm'] >= 0].copy()
+    valid_measurements = filter_valid_measurements(measurements)
     valid_measurements['volume_mm3'] = valid_measurements['diameter_mm'].apply(
         calculate_sphere_volume
     )

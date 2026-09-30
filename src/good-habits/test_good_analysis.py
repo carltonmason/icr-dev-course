@@ -4,6 +4,7 @@ import pandas as pd
 from good_analysis import (
     calculate_sphere_volume,
     compute_growth_rate,
+    filter_valid_measurements,
     is_responder,
 )
 
@@ -37,9 +38,18 @@ def test_growing_tumor_is_not_responder():
     assert not is_responder(rate)
 
 
+def test_filter_drops_negative_diameters_and_keeps_zero():
+    measurements = pd.DataFrame({
+        'diameter_mm': [-1.0, 0.0, 12.5],
+    })
+    valid_measurements = filter_valid_measurements(measurements)
+    assert list(valid_measurements['diameter_mm']) == [0.0, 12.5]
+
+
 if __name__ == '__main__':
     test_sphere_volume_known_value()
     test_sphere_volume_zero()
     test_shrinking_tumor_is_responder()
     test_growing_tumor_is_not_responder()
+    test_filter_drops_negative_diameters_and_keeps_zero()
     print("All tests passed.")
