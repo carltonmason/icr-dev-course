@@ -18,18 +18,20 @@ Pyright is configured via `pyrightconfig.json` to use `.venv` for type checking.
 
 ## Running the examples
 
-All scripts must be run from the project root:
+The scripts use relative paths, so the working directory matters. `make_data.py` writes to `src/good-habits/tumor_data.csv` and must be run from the project root. The analysis scripts read `tumor_data.csv` from the current directory and must be run from `src/good-habits/`:
 
 ```bash
-# Generate synthetic data (only needed once)
+# Generate synthetic data (only needed once) — run from the project root
 .venv/bin/python src/good-habits/make_data.py
 
-# Run the analysis scripts
-.venv/bin/python src/good-habits/bad_analysis.py
-.venv/bin/python src/good-habits/good_analysis.py
+# Run the analysis scripts — run from src/good-habits/
+cd src/good-habits
+../../.venv/bin/python bad_analysis.py
+../../.venv/bin/python better_names_analysis.py
+../../.venv/bin/python good_analysis.py
 
-# Run the tests
-.venv/bin/python src/good-habits/test_good_analysis.py
+# Run the tests (no data file needed; works from either directory)
+../../.venv/bin/python test_good_analysis.py
 ```
 
 Both analysis scripts produce the same output:
@@ -45,7 +47,7 @@ Mean growth rate: 56.51 mm^3/day
 - **`bad_analysis.py`** — single-script, cryptic names, no functions, no tests. Intentionally bad.
 - **`better_names_analysis.py`** — improved variable naming.
 - **`good_analysis.py`** — modular functions with type annotations, clear naming, docstrings. The "developer" version.
-- **`test_good_analysis.py`** — four unit tests for `good_analysis.py`, run as a plain script (no pytest dependency).
+- **`test_good_analysis.py`** — five unit tests for `good_analysis.py`, run as a plain script (no pytest dependency).
 - **`make_data.py`** — generates `tumor_data.csv` (10 synthetic patients × 4 timepoints). Output is gitignored.
 
 The bad, better, good analysis files are pedagogical triplets — same inputs, same outputs, different code quality.
