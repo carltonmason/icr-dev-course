@@ -1,5 +1,6 @@
 *.docx
 .venv/
+.venv-linux/
 tumor_data.csv
 
 # Generated slide decks — rebuild from markdown source using build_slides.js
