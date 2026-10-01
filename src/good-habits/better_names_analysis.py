@@ -2,10 +2,13 @@
 import math
 import pandas as pd
 
-# load data
 SPHERE_COEFFICIENT = (4 / 3) * math.pi
+
+# load data
 measurements = pd.read_csv("tumor_data.csv")
+# filter out invalid measurements
 valid_measurements = measurements[measurements['d'] >= 0].copy()
+# calculate sphere volume
 valid_measurements['volume_mm3'] = SPHERE_COEFFICIENT * (valid_measurements['d'] / 2) ** 3
 
 # calculate growth rates
