@@ -19,16 +19,20 @@ def filter_valid_measurements(measurements: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_measurements(csv_path: str) -> pd.DataFrame:
-    """Load measurements, drop invalid rows, and add tumor volume."""
+    """Load measurements from CSV with descriptive column names."""
     measurements = pd.read_csv(csv_path)
-    measurements = measurements.rename(
+    return measurements.rename(
         columns={'p': 'patient_id', 't': 'day', 'd': 'diameter_mm'}
     )
-    valid_measurements = filter_valid_measurements(measurements)
-    valid_measurements['volume_mm3'] = valid_measurements['diameter_mm'].apply(
+
+
+def add_volume_column(measurements: pd.DataFrame) -> pd.DataFrame:
+    """Return a copy of measurements with a volume_mm3 column added."""
+    with_volume = measurements.copy()
+    with_volume['volume_mm3'] = with_volume['diameter_mm'].apply(
         calculate_sphere_volume
     )
-    return valid_measurements
+    return with_volume
 
 
 def compute_growth_rate(patient_measurements: pd.DataFrame) -> float:
@@ -64,7 +68,9 @@ def is_responder(growth_rate_mm3_per_day: float) -> bool:
 
 
 if __name__ == '__main__':
-    measurements = load_measurements('tumor_data.csv')
+    raw_measurements = load_measurements('tumor_data.csv')
+    valid_measurements = filter_valid_measurements(raw_measurements)
+    measurements = add_volume_column(valid_measurements)
     cohort_summary = summarize_cohort(measurements)
     responder_count = cohort_summary['growth_rate_mm3_per_day'].apply(is_responder).sum()
     print(f"Responders: {responder_count}/{len(cohort_summary)}")

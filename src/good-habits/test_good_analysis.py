@@ -1,11 +1,15 @@
 """Tests for tumor growth analysis."""
 import math
+import os
+import tempfile
 import pandas as pd
 from good_analysis import (
+    add_volume_column,
     calculate_sphere_volume,
     compute_growth_rate,
     filter_valid_measurements,
     is_responder,
+    load_measurements,
 )
 
 
@@ -46,10 +50,29 @@ def test_filter_drops_negative_diameters_and_keeps_zero():
     assert list(valid_measurements['diameter_mm']) == [0.0, 12.5]
 
 
+def test_load_measurements_renames_columns():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        csv_path = os.path.join(temp_dir, 'measurements.csv')
+        pd.DataFrame({'p': [1], 't': [30], 'd': [12.5]}).to_csv(csv_path, index=False)
+        measurements = load_measurements(csv_path)
+    assert list(measurements.columns) == ['patient_id', 'day', 'diameter_mm']
+    assert measurements.iloc[0].tolist() == [1, 30, 12.5]
+
+
+def test_add_volume_column_computes_sphere_volume():
+    measurements = pd.DataFrame({'diameter_mm': [0.0, 20.0]})
+    with_volume = add_volume_column(measurements)
+    assert with_volume['volume_mm3'].iloc[0] == 0
+    assert math.isclose(with_volume['volume_mm3'].iloc[1], (4 / 3) * math.pi * 1000)
+    assert 'volume_mm3' not in measurements.columns
+
+
 if __name__ == '__main__':
     test_sphere_volume_known_value()
     test_sphere_volume_zero()
     test_shrinking_tumor_is_responder()
     test_growing_tumor_is_not_responder()
     test_filter_drops_negative_diameters_and_keeps_zero()
+    test_load_measurements_renames_columns()
+    test_add_volume_column_computes_sphere_volume()
     print("All tests passed.")
