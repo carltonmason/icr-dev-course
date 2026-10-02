@@ -1,5 +1,6 @@
 """Tumor growth analysis for treatment response assessment."""
 import math
+import sys
 import pandas as pd
 
 
@@ -59,7 +60,9 @@ def summarize_cohort(measurements: pd.DataFrame) -> pd.DataFrame:
             'patient_id': patient_id,
             'growth_rate_mm3_per_day': compute_growth_rate(patient_data),
         })
-    return pd.DataFrame(growth_records)
+    return pd.DataFrame(
+        growth_records, columns=['patient_id', 'growth_rate_mm3_per_day']
+    )
 
 
 def is_responder(growth_rate_mm3_per_day: float) -> bool:
@@ -77,6 +80,9 @@ if __name__ == '__main__':
     valid_measurements = filter_valid_measurements(raw_measurements)
     measurements = add_volume_column(valid_measurements)
     cohort_summary = summarize_cohort(measurements)
+    if cohort_summary.empty:
+        sys.exit("Error: no patients have at least 2 valid measurements, "
+                 "so growth rates cannot be computed.")
     responder_count = count_responders(cohort_summary['growth_rate_mm3_per_day'])
     print(f"Responders: {responder_count}/{len(cohort_summary)}")
     print(f"Mean growth rate: {cohort_summary['growth_rate_mm3_per_day'].mean():.2f} mm^3/day")

@@ -11,6 +11,7 @@ from good_analysis import (
     filter_valid_measurements,
     is_responder,
     load_measurements,
+    summarize_cohort,
 )
 
 
@@ -78,6 +79,22 @@ def test_count_responders_returns_plain_int():
     assert type(count_responders(growth_rates)) is int
 
 
+def test_count_responders_empty_cohort_is_zero():
+    assert count_responders(pd.Series([], dtype=float)) == 0
+
+
+def test_summarize_cohort_with_no_eligible_patients_keeps_columns():
+    # A single measurement per patient is too few to compute a growth rate
+    measurements = pd.DataFrame({
+        'patient_id': [1],
+        'day': [0],
+        'volume_mm3': [500.0],
+    })
+    cohort_summary = summarize_cohort(measurements)
+    assert len(cohort_summary) == 0
+    assert count_responders(cohort_summary['growth_rate_mm3_per_day']) == 0
+
+
 if __name__ == '__main__':
     test_sphere_volume_known_value()
     test_sphere_volume_zero()
@@ -88,4 +105,6 @@ if __name__ == '__main__':
     test_add_volume_column_computes_sphere_volume()
     test_count_responders_counts_only_shrinking_tumors()
     test_count_responders_returns_plain_int()
+    test_count_responders_empty_cohort_is_zero()
+    test_summarize_cohort_with_no_eligible_patients_keeps_columns()
     print("All tests passed.")

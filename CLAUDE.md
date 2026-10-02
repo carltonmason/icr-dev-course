@@ -11,7 +11,7 @@ Python 3.9.6, managed via a `.venv` virtual environment at the project root. Alw
 source .venv/bin/activate
 
 # Install dependencies
-pip install pandas numpy
+pip install pandas numpy pandas-stubs
 ```
 
 Pyright is configured via `pyrightconfig.json` to use `.venv` for type checking.
