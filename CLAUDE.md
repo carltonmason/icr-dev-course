@@ -47,7 +47,7 @@ Mean growth rate: 56.51 mm^3/day
 - **`bad_analysis.py`** — single-script, cryptic names, no functions, no tests. Intentionally bad.
 - **`better_names_analysis.py`** — improved variable naming.
 - **`good_analysis.py`** — modular functions with type annotations, clear naming, docstrings. The "developer" version.
-- **`test_good_analysis.py`** — seven unit tests for `good_analysis.py`, run as a plain script (no pytest dependency).
+- **`test_good_analysis.py`** — nine unit tests for `good_analysis.py`, run as a plain script (no pytest dependency).
 - **`make_data.py`** — generates `tumor_data.csv` (10 synthetic patients × 4 timepoints). Output is gitignored.
 
 The bad, better, good analysis files are pedagogical triplets — same inputs, same outputs, different code quality.

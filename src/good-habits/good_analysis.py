@@ -67,11 +67,16 @@ def is_responder(growth_rate_mm3_per_day: float) -> bool:
     return growth_rate_mm3_per_day < 0
 
 
+def count_responders(growth_rates_mm3_per_day: pd.Series) -> int:
+    """Return the number of patients whose tumor volume is shrinking."""
+    return int(growth_rates_mm3_per_day.apply(is_responder).sum())
+
+
 if __name__ == '__main__':
     raw_measurements = load_measurements('tumor_data.csv')
     valid_measurements = filter_valid_measurements(raw_measurements)
     measurements = add_volume_column(valid_measurements)
     cohort_summary = summarize_cohort(measurements)
-    responder_count = cohort_summary['growth_rate_mm3_per_day'].apply(is_responder).sum()
+    responder_count = count_responders(cohort_summary['growth_rate_mm3_per_day'])
     print(f"Responders: {responder_count}/{len(cohort_summary)}")
     print(f"Mean growth rate: {cohort_summary['growth_rate_mm3_per_day'].mean():.2f} mm^3/day")

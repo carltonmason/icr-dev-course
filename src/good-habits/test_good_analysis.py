@@ -7,6 +7,7 @@ from good_analysis import (
     add_volume_column,
     calculate_sphere_volume,
     compute_growth_rate,
+    count_responders,
     filter_valid_measurements,
     is_responder,
     load_measurements,
@@ -67,6 +68,16 @@ def test_add_volume_column_computes_sphere_volume():
     assert 'volume_mm3' not in measurements.columns
 
 
+def test_count_responders_counts_only_shrinking_tumors():
+    growth_rates = pd.Series([-5.0, 0.0, 12.0, -0.1])
+    assert count_responders(growth_rates) == 2
+
+
+def test_count_responders_returns_plain_int():
+    growth_rates = pd.Series([-1.0])
+    assert type(count_responders(growth_rates)) is int
+
+
 if __name__ == '__main__':
     test_sphere_volume_known_value()
     test_sphere_volume_zero()
@@ -75,4 +86,6 @@ if __name__ == '__main__':
     test_filter_drops_negative_diameters_and_keeps_zero()
     test_load_measurements_renames_columns()
     test_add_volume_column_computes_sphere_volume()
+    test_count_responders_counts_only_shrinking_tumors()
+    test_count_responders_returns_plain_int()
     print("All tests passed.")
