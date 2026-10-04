@@ -2,9 +2,10 @@
 
 Companion code for the "Five Habits of a Software Developer" section.
 
-A tumor growth analysis in two versions: the "programmer" version that works
-but commits every sin we discussed, and the "developer" version that does the
-same job with naming, modularity, and tests.
+A tumor growth analysis in three versions: the "programmer" version that works
+but commits every sin we discussed, an incrementally improved version with
+better names, and the "developer" version that does the same job with naming,
+modularity, and tests.
 
 ## Files
 
@@ -15,18 +16,21 @@ same job with naming, modularity, and tests.
 | `bad_analysis.py` | The "programmer" version. Runs. Produces correct numbers. Commits every sin. |
 | `better_names_analysis.py` | The incrementally improved "programmer" version with better names for vars and functions. Runs. Produces correct numbers. Commits every sin. |
 | `good_analysis.py` | The "developer" version. Same inputs, same outputs, completely different artifact. |
-| `test_good_analysis.py` | Tests for the developer version. Four tests, all passing. |
+| `test_good_analysis.py` | Tests for the developer version. Run as a plain script, no pytest needed. |
 
 ## Running the examples
 
 All files use only `pandas` and the standard library. No install beyond pandas.
 
 ```bash
-# Generate the data (only needed once)
-python make_data.py
+# Generate the data (only needed once) — run from the project root
+(cd ../.. && python src/good-habits/make_data.py)
 
 # Run the bad version
 python bad_analysis.py
+
+# Run the better-names version
+python better_names_analysis.py
 
 # Run the good version
 python good_analysis.py
@@ -35,18 +39,20 @@ python good_analysis.py
 python test_good_analysis.py
 ```
 
-Both analysis scripts produce the same output:
+All three analysis scripts produce the same numbers:
 
 ```
 Responders: 2/10
 Mean growth rate: 56.51 mm^3/day
 ```
 
+(`bad_analysis.py` prints them with cryptic labels: `n responders` and `mean g`.)
+
 That's the whole point. Same numbers, completely different code.
 
 ## Exercise suggestions
 
-Once you've read through both versions, try one of these:
+Once you've read through the versions, try one of these:
 
 1. **Add a bug to `good_analysis.py`** — change the sphere volume formula to use
    `diameter ** 3` instead of `radius ** 3`. Run the tests. Watch them fail and

@@ -1,53 +1,25 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Environment
 
-Python 3.9.6, managed via a `.venv` virtual environment at the project root. Always use `.venv/bin/python` (not `python` or `python3`) to run scripts.
+Python 3.9 in `.venv` at the project root. Always run Python as `.venv/bin/python` (or `../../.venv/bin/python` from `src/good-habits/`). Dependencies are in `requirements.txt`.
 
-```bash
-# Activate the venv
-source .venv/bin/activate
+## Running
 
-# Install dependencies
-pip install pandas numpy pandas-stubs
-```
+Paths are relative, so the working directory matters:
 
-Pyright is configured via `pyrightconfig.json` to use `.venv` for type checking.
+- `make_data.py` — run from the project root (writes `src/good-habits/tumor_data.csv`).
+- Analysis scripts — run from `src/good-habits/`.
+- `test_good_analysis.py` — works from any directory (it writes its own temporary CSV).
+- Tests are a plain script (`test_good_analysis.py`), not pytest. Don't add a pytest dependency.
 
-## Running the examples
+## Pedagogical constraints (src/good-habits/)
 
-The scripts use relative paths, so the working directory matters. `make_data.py` writes to `src/good-habits/tumor_data.csv` and must be run from the project root. The analysis scripts read `tumor_data.csv` from the current directory and must be run from `src/good-habits/`:
+`bad_analysis.py` → `better_names_analysis.py` → `good_analysis.py` show the same analysis at increasing code quality.
 
-```bash
-# Generate synthetic data (only needed once) — run from the project root
-.venv/bin/python src/good-habits/make_data.py
+- The bad and better versions are intentionally flawed. Don't refactor, lint-fix or "improve" them unless asked.
+- All three must produce the same numbers: 2/10 responders, mean growth rate 56.51 mm^3/day (labels differ in `bad_analysis.py`).
 
-# Run the analysis scripts — run from src/good-habits/
-cd src/good-habits
-../../.venv/bin/python bad_analysis.py
-../../.venv/bin/python better_names_analysis.py
-../../.venv/bin/python good_analysis.py
+## Slides
 
-# Run the tests (no data file needed; works from either directory)
-../../.venv/bin/python test_good_analysis.py
-```
-
-Both analysis scripts print the same values:
-```
-Responders: 2/10
-Mean growth rate: 56.51 mm^3/day
-```
-
-## Architecture
-
-`src/good-habits/` contains a deliberate contrast between two implementations of the same tumor growth analysis:
-
-- **`bad_analysis.py`** — single-script, cryptic names, no functions, no tests. Intentionally bad.
-- **`better_names_analysis.py`** — improved variable naming.
-- **`good_analysis.py`** — modular functions with type annotations, clear naming, docstrings. The "developer" version.
-- **`test_good_analysis.py`** — nine unit tests for `good_analysis.py`, run as a plain script (no pytest dependency).
-- **`make_data.py`** — generates `tumor_data.csv` (10 synthetic patients × 4 timepoints). Output is gitignored.
-
-The bad, better, good analysis files are pedagogical triplets — same inputs, same outputs, different code quality.
+The lecture slide pipeline (`build_slides.js`, `slides/`) is covered by the icr-lecture-slides skill.
