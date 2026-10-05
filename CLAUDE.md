@@ -2,7 +2,7 @@
 
 ## Environment
 
-Python 3.9 in `.venv` at the project root. Always run Python as `.venv/bin/python` (or `../../.venv/bin/python` from `src/good-habits/`). Dependencies are in `requirements.txt`.
+Managed with uv. Python 3.13 (pinned in `.python-version`); dependencies in `pyproject.toml`, locked in `uv.lock`. Run Python as `uv run python …` (works from any subdirectory). Change dependencies with `uv add` / `uv remove`, not pip.
 
 ## Running
 

@@ -1,7 +1,5 @@
 *.docx
 .venv/
-.venv-linux/
-tumor_data.csv
  
 # Python
 __pycache__/

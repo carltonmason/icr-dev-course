@@ -18,25 +18,37 @@ modularity, and tests.
 | `good_analysis.py` | The "developer" version. Same inputs, same outputs, completely different artifact. |
 | `test_good_analysis.py` | Tests for the developer version. Run as a plain script, no pytest needed. |
 
-## Running the examples
+## Setup
 
-All files use only `pandas` and the standard library. No install beyond pandas.
+These examples use [uv](https://docs.astral.sh/uv/) to manage Python and dependencies.
+Install it by following the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/)
+(on macOS: `brew install uv`).
+
+Then, from the project root:
 
 ```bash
-# Generate the data (only needed once) — run from the project root
-(cd ../.. && python src/good-habits/make_data.py)
+uv sync
+```
+
+This installs Python 3.13 if needed and creates a `.venv` with `pandas` and `numpy`.
+
+## Running the examples
+
+```bash
+# Generate the sample tumor data (only needed once) — run from the project root
+(cd ../.. && uv run python src/good-habits/make_data.py)
 
 # Run the bad version
-python bad_analysis.py
+uv run python bad_analysis.py
 
 # Run the better-names version
-python better_names_analysis.py
+uv run python better_names_analysis.py
 
 # Run the good version
-python good_analysis.py
+uv run python good_analysis.py
 
 # Run the tests
-python test_good_analysis.py
+uv run python test_good_analysis.py
 ```
 
 All three analysis scripts produce the same numbers:
