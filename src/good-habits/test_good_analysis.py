@@ -94,17 +94,3 @@ def test_summarize_cohort_with_no_eligible_patients_keeps_columns():
     assert len(cohort_summary) == 0
     assert count_responders(cohort_summary['growth_rate_mm3_per_day']) == 0
 
-
-if __name__ == '__main__':
-    test_sphere_volume_known_value()
-    test_sphere_volume_zero()
-    test_shrinking_tumor_is_responder()
-    test_growing_tumor_is_not_responder()
-    test_filter_drops_negative_diameters_and_keeps_zero()
-    test_load_measurements_renames_columns()
-    test_add_volume_column_computes_sphere_volume()
-    test_count_responders_counts_only_shrinking_tumors()
-    test_count_responders_returns_plain_int()
-    test_count_responders_empty_cohort_is_zero()
-    test_summarize_cohort_with_no_eligible_patients_keeps_columns()
-    print("All tests passed.")

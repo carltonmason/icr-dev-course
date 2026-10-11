@@ -16,7 +16,7 @@ modularity, and tests.
 | `bad_analysis.py` | The "programmer" version. Runs. Produces correct numbers. Commits every sin. |
 | `better_names_analysis.py` | The incrementally improved "programmer" version with better names for vars and functions. Runs. Produces correct numbers. Commits every sin. |
 | `good_analysis.py` | The "developer" version. Same inputs, same outputs, completely different artifact. |
-| `test_good_analysis.py` | Tests for the developer version. Run as a plain script, no pytest needed. |
+| `test_good_analysis.py` | Tests for the developer version. uv run pytest. |
 
 ## Setup
 
@@ -48,7 +48,7 @@ uv run python better_names_analysis.py
 uv run python good_analysis.py
 
 # Run the tests
-uv run python test_good_analysis.py
+uv run pytest
 ```
 
 All three analysis scripts produce the same numbers:

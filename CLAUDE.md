@@ -11,7 +11,7 @@ Paths are relative, so the working directory matters:
 - `make_data.py` — run from the project root (writes `src/good-habits/tumor_data.csv`).
 - Analysis scripts — run from `src/good-habits/`.
 - `test_good_analysis.py` — works from any directory (it writes its own temporary CSV).
-- Tests are a plain script (`test_good_analysis.py`), not pytest. Don't add a pytest dependency.
+- "Run tests with uv run pytest
 
 ## Pedagogical constraints (src/good-habits/)
 
