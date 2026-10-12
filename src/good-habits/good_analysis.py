@@ -4,7 +4,6 @@ import math
 
 import pandas as pd
 
-MM_PER_CM = 10.0
 SPHERE_COEFFICIENT = (4 / 3) * math.pi
 
 
