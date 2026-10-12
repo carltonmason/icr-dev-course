@@ -11,4 +11,12 @@ dependencies = [
 dev = [
     "pandas-stubs>=3.0.5.260914",
     "pytest>=9.1.1",
+    "ruff>=0.17.0",
 ]
+
+[tool.ruff]
+extend-exclude = [
+    "src/good-habits/bad_analysis.py",
+    "src/good-habits/better_names_analysis.py",
+]
+force-exclude = true
