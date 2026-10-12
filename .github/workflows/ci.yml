@@ -1,5 +1,5 @@
 name: CI
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   check:
@@ -11,5 +11,5 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
         if: ${{ !cancelled() }}
-      - run: uv run pytest -m
+      - run: uv run pytest
         if: ${{ !cancelled() }}
