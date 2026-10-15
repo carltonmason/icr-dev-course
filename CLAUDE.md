@@ -19,3 +19,6 @@ Paths are relative, so the working directory matters:
 
 - The bad and better versions are intentionally flawed. Don't refactor, lint-fix or "improve" them unless asked.
 - All three must produce the same numbers: 2/10 responders, mean growth rate 56.51 mm^3/day (labels differ in `bad_analysis.py`).
+
+## Git
+- Use conventional commits (feat, fix, docs, chore, refactor, test).
